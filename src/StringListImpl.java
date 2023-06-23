@@ -50,9 +50,7 @@ public class StringListImpl implements StringList {
 
     @Override
     public String remove(String item) {
-        if (item == null) {
-            throw new IllegalArgumentException("Элемент не должен быть null!");
-        }
+        checkForNull(item);
         int index = this.indexOf(item);
         this.remove(index);
         return item;
@@ -76,11 +74,8 @@ public class StringListImpl implements StringList {
 
     @Override
     public boolean contains(String item) {
-        checkForNull(item);
-        for (int i = 0; i < size; i++) {
-            if (list[i].equals(item)) {
-                return true;
-            }
+        if (indexOf(item) != -1) {
+            return true;
         }
         return false;
     }
