@@ -76,7 +76,7 @@ public class IntegerListImpl implements IntegerList {
     public boolean contains(Integer item) {
         checkForNull(item);
         Integer[] listCopy = toArray();
-        sortInsertion(listCopy);
+        quickSort(listCopy, 0, size - 1);
         return binarySearch(listCopy, item);
     }
 
@@ -97,16 +97,35 @@ public class IntegerListImpl implements IntegerList {
         return false;
     }
 
-    private static void sortInsertion(Integer[] arr) {
-        for (int i = 1; i < arr.length; i++) {
-            int temp = arr[i];
-            int j = i;
-            while (j > 0 && arr[j - 1] >= temp) {
-                arr[j] = arr[j - 1];
-                j--;
-            }
-            arr[j] = temp;
+    private static void quickSort(Integer[] arr, int begin, int end) {
+        if (begin < end) {
+            int partitionIndex = partition(arr, begin, end);
+
+            quickSort(arr, begin, partitionIndex - 1);
+            quickSort(arr, partitionIndex + 1, end);
         }
+    }
+
+    private static int partition(Integer[] arr, int begin, int end) {
+        int pivot = arr[end];
+        int i = (begin - 1);
+
+        for (int j = begin; j < end; j++) {
+            if (arr[j] <= pivot) {
+                i++;
+
+                swapElements(arr, i, j);
+            }
+        }
+
+        swapElements(arr, i + 1, end);
+        return i + 1;
+    }
+
+    private static void swapElements(Integer[] arr, int left, int right) {
+        int temp = arr[left];
+        arr[left] = arr[right];
+        arr[right] = temp;
     }
 
     @Override
@@ -176,7 +195,6 @@ public class IntegerListImpl implements IntegerList {
         for (int i = 0; i < size; i++) {
             arr[i] = list[i];
         }
-        //System.out.println(Arrays.toString(arr));
         return arr;
     }
 
@@ -198,12 +216,8 @@ public class IntegerListImpl implements IntegerList {
     }
 
     private void actualizeLength() {
-        if ((list.length - size) <= list.length / 4 || (list.length - size) > size * 2) {
-            Integer[] newList = new Integer[size * 2 + 1];
-            for (int i = 0; i < size; i++) {
-                newList[i] = list[i];
-            }
-            list = newList;
+        if ((list.length - size) <= size / 4 || (list.length - size) > size * 2) {
+            list = Arrays.copyOf(list, size + size / 2 + 1);
         }
     }
 
